@@ -63,21 +63,16 @@ export default class EndpointPopup extends React.Component<Props, State> {
         <Wrapper>
           <LogoWrapper>
             <Logo>
-              <img src={imageSource} alt="" />
-              <Heading>GraphQL Playground</Heading>
+              <Heading>TIBCO GraphQL API's</Heading>
             </Logo>
           </LogoWrapper>
           <Form action="" onSubmit={this.submit}>
-            <Input
-              type="text"
-              placeholder="Enter an endpoint url..."
-              value={this.state.endpoint}
-              onChange={this.onChangeEndpoint}
-              valid={typeof valid === 'boolean' && valid}
-              invalid={typeof valid === 'boolean' && !valid}
-              autoFocus={true}
-            />
-
+          <select onChange={this.onChangeEndpoint} autoFocus={true} >
+             <option>Select API</option> 
+             <option value="https://eu-west-1.integration.cloud.tibcoapps.com/hbynejrppnbf5sndc4gbtp2lopuuaze3/graphql">mAPI</option>
+              <option value="https://m/hbynejrppnbf5sndc4gbtp2lopuuaze3/graphql">rAPI</option> 
+              <option value="https://spotify-graphql-server.herokuapp.com/graphql">SWAPI</option> 
+              </select>
             {valid && (
               <Button purple={true} onClick={this.close}>
                 Use Endpoint

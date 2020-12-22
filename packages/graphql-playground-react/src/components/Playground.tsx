@@ -444,6 +444,7 @@ const PlaygroundContainer = styled.div`
   flex-direction: column;
 
   height: 100%;
+  width: 80%;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -467,12 +468,14 @@ const PlaygroundContainer = styled.div`
 const GraphiqlsContainer = styled.div`
   height: calc(100vh - 57px);
   position: relative;
+  background-color: white;
   overflow: hidden;
 `
 
 const GraphiqlWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 95%;
+  margin-left: 120px;
   position: relative;
   overflow: hidden;
   visibility: hidden;

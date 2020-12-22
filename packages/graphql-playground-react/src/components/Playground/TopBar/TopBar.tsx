@@ -18,6 +18,7 @@ import {
   editEndpoint,
   prettifyQuery,
   refetchSchema,
+  displayQuery,
 } from '../../../state/sessions/actions'
 import { share } from '../../../state/sharing/actions'
 import { openHistory } from '../../../state/general/actions'
@@ -35,6 +36,7 @@ export interface Props {
 
   editEndpoint: (value: string) => void
   prettifyQuery: () => void
+  displayQuery: ()=>void
   openHistory: () => void
   share: () => void
   refetchSchema: () => void
@@ -56,6 +58,7 @@ class TopBar extends React.Component<Props, {}> {
       <TopBarWrapper>
         <Button onClick={this.props.prettifyQuery}>Prettify</Button>
         <Button onClick={this.openHistory}>History</Button>
+        <Button onClick={this.props.displayQuery}>ExQuery</Button>
         <UrlBarWrapper>
           <UrlBar
             value={this.props.endpoint}
@@ -168,6 +171,7 @@ export default connect(
   {
     editEndpoint,
     prettifyQuery,
+    displayQuery,
     openHistory,
     share,
     refetchSchema,

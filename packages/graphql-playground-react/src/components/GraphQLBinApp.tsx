@@ -46,7 +46,7 @@ class GraphQLBinApp extends React.Component<Props & ReduxProps, State> {
     super(props)
 
     this.state = {
-      endpoint: props.endpoint,
+      endpoint: "https://eu-west-1.integration.cloud.tibcoapps.com/hbynejrppnbf5sndc4gbtp2lopuuaze3/graphql",
       subscriptionEndpoint: props.subscriptionEndpoint,
       loading: false,
       headers: props.headers || {},

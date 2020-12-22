@@ -225,6 +225,11 @@ function* prettifyQuery() {
   }
 }
 
+function* displayQuery() {
+  console.log("Its called")
+  yield put(editQuery(localStorage.getItem("example")));
+}
+
 export const sessionsSagas = [
   takeLatest('GET_QUERY_FACTS', safely(setQueryFacts)),
   takeLatest('SET_OPERATION_NAME', safely(setQueryFacts)),
@@ -236,6 +241,7 @@ export const sessionsSagas = [
   takeLatest('SCHEMA_FETCHING_SUCCESS', safely(renewStacks)),
   takeEvery('QUERY_SUCCESS' as any, safely(addToHistory)),
   takeLatest('PRETTIFY_QUERY', safely(prettifyQuery)),
+  takeLatest('DISPLAY_QUERY', safely(displayQuery)),
 ]
 
 // needed to fix typescript

@@ -1,6 +1,9 @@
 import * as React from 'react'
 import Playground, { Playground as IPlayground } from './Playground'
+import Autocomplete from './Autocomplete'
 import { Helmet } from 'react-helmet'
+//import {editQuery} from '../state/sessions/actions'
+//import {put} from '../../node_modules/redux-saga/effects'
 import { GraphQLConfig } from '../graphqlConfig'
 import * as yaml from 'js-yaml'
 import ProjectsSideNav from './ProjectsSideNav'
@@ -26,6 +29,7 @@ import { Session, Tab } from '../state/sessions/reducers'
 import { ApolloLink } from 'apollo-link'
 import { injectTabs } from '../state/workspace/actions'
 import { buildSchema, buildClientSchema, GraphQLSchema } from 'graphql'
+import {displayQuery} from '../state/sessions/actions'
 
 function getParameterByName(name: string, uri?: string): string | null {
   const url = uri || window.location.href
@@ -53,6 +57,7 @@ export interface PlaygroundWrapperProps {
   canSaveConfig?: boolean
   onSaveConfig?: (configString: string) => void
   onNewWorkspace?: () => void
+  displayQuery: ()=>void
   getRef?: (ref: any) => void
   platformToken?: string
   env?: any
@@ -74,7 +79,11 @@ export interface ReduxProps {
   theme: string
   injectTabs: (tabs: Tab[]) => void
 }
-
+interface IMyObject {
+  value: string;
+  display:string;
+  example:string;
+}
 export interface State {
   endpoint: string
   subscriptionPrefix?: string
@@ -87,7 +96,11 @@ export interface State {
   activeEnv?: string
   headers?: any
   schema?: GraphQLSchema
+  arr: IMyObject[]
+  tcolor:string
+  apinames:string[]
 }
+
 
 class PlaygroundWrapper extends React.Component<
   PlaygroundWrapperProps & ReduxProps,
@@ -99,6 +112,7 @@ class PlaygroundWrapper extends React.Component<
     ;(global as any).m = this
 
     this.state = this.mapPropsToState(props)
+   /* this.state = { endpoint: props.endpoint,arr: []} */
     this.removeLoader()
   }
 
@@ -144,6 +158,9 @@ class PlaygroundWrapper extends React.Component<
       activeEnv,
       activeProjectName: projectName,
       headers,
+      arr:[],
+      tcolor:"dark",
+      apinames:[]
     }
   }
 
@@ -265,6 +282,25 @@ class PlaygroundWrapper extends React.Component<
   }
 
   componentDidMount() {
+    fetch("https://eu-west-1.integration.cloud.tibcoapps.com/cqu4yxe3dndygjfts3ov7ivhttoysfzw/getendpoints")
+    .then((response) => {
+      return response.json();
+    })
+    .then(data => {
+      let apisFromDb = data.apilist.map(api => {
+        return { value: api.endpoint, display: api.name,example:api.example }
+      });
+      let apnames = data.apilist.map(api => {
+        return api.name
+      });
+      this.setState({
+        arr: apisFromDb,
+        apinames:apnames
+        
+      });
+    }).catch(error => {
+      console.log(error);
+    });
     if (this.state.subscriptionEndpoint === '') {
       this.updateSubscriptionsUrl()
     }
@@ -332,7 +368,7 @@ class PlaygroundWrapper extends React.Component<
       root.classList.remove('playgroundIn')
     }
   }
-
+    
   render() {
     const title = this.props.setTitle ? (
       <Helmet>
@@ -345,8 +381,31 @@ class PlaygroundWrapper extends React.Component<
     const combinedHeaders = { ...defaultHeaders, ...stateHeaders }
 
     const { theme } = this.props
+    
     return (
       <div>
+        <h2 style={{color:"#03a1fc",textAlign:"center"}}><b>TIBCO's GraphQL API's</b></h2>
+        <div style={{height:"50px",marginLeft:"50px", marginBottom:"20px", marginTop:"20px",zIndex:101}} >
+       
+          <div style={{marginLeft:"5px",float:"left",width:"300px",height:"45px"}}> 
+                <p>Search API🔍:</p>
+                <Autocomplete options={this.state.apinames} parentCallback={this.handleCallback}/> 
+         </div>
+          
+          <label htmlFor="mySelect1">Choose an API:</label>&nbsp;&nbsp;
+          <select id="mySelect1" value={this.state.endpoint} onChange={this.handleChangeEndpoint}
+           autoFocus={true} >
+            {this.state.arr.map((api) => 
+            <option key={api.value} value={api.value}>{api.display}</option>)}
+          </select>&nbsp;&nbsp;
+
+            <label htmlFor="mySelect2">Theme:</label>&nbsp;&nbsp;
+             <select id="mySelect2" onChange={this.colourChange}>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+        </div>
+        <hr/>
         {title}
         <ThemeProvider
           theme={{
@@ -354,7 +413,7 @@ class PlaygroundWrapper extends React.Component<
             mode: theme,
             colours: theme === 'dark' ? darkColours : lightColours,
             editorColours: {
-              ...(theme === 'dark' ? darkEditorColours : lightEditorColours),
+              ...(theme === this.state.tcolor ? darkEditorColours : lightEditorColours),
               ...this.props.codeTheme,
             },
             settings: this.props.settings,
@@ -376,6 +435,7 @@ class PlaygroundWrapper extends React.Component<
                   configPath={this.props.configPath}
                 />
               )}
+           
             <Playground
               endpoint={this.state.endpoint}
               shareEnabled={this.props.shareEnabled}
@@ -449,11 +509,36 @@ class PlaygroundWrapper extends React.Component<
       activeProjectName: projectName,
     })
   }
-
-  private handleChangeEndpoint = endpoint => {
-    this.setState({ endpoint })
+  colourChange = (e) => {
+    this.setState({ tcolor: e.target.value })
   }
 
+  private handleChangeEndpoint = e => {
+    this.setState({ endpoint: e.target.value })
+    this.state.arr.map((obj) => {
+      if (obj.value==e.target.value) {
+        localStorage.setItem("example",obj.example)
+        return;
+      }
+    })
+    const vm = this;
+    setTimeout(function () {
+      vm.props.displayQuery();
+    },100)
+  }
+
+  handleCallback = (cd) => {
+    this.state.arr.map((obj) => {
+      if (obj.display == cd) {
+        this.setState({
+          endpoint:obj.value
+        })
+        localStorage.setItem("example",obj.example);
+        return;
+      }
+    })
+  }
+  
   private handleChangeSubscriptionsEndpoint = subscriptionEndpoint => {
     this.setState({ subscriptionEndpoint })
   }
@@ -535,7 +620,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(
   mapStateToProps,
-  { injectTabs },
+  { injectTabs,displayQuery, },
 )(PlaygroundWrapper)
 
 async function find(

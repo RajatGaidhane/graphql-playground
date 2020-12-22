@@ -30,6 +30,7 @@ export const {
   renewStacks,
   runQuery,
   prettifyQuery,
+  displayQuery,
   fetchSchema,
   updateQueryFacts,
   runQueryAtPosition,
@@ -89,6 +90,7 @@ export const {
 
   UPDATE_QUERY_FACTS: simpleAction(),
   PRETTIFY_QUERY: simpleAction(),
+  DISPLAY_QUERY:simpleAction(),
   INJECT_HEADERS: (headers, endpoint) => ({ headers, endpoint }),
 
   // setting multiple props

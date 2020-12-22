@@ -3,13 +3,13 @@ import TypeLink from './TypeLink'
 import { serializeRoot } from '../util/stack'
 import { CategoryTitle } from './DocsStyles'
 import { styled } from '../../../styled'
-
 export interface Props {
   schema: any
   sessionId: string
 }
 
 export default class GraphDocsRoot extends React.PureComponent<Props, {}> {
+ 
   render() {
     const { schema, sessionId } = this.props
     const obj = serializeRoot(schema)
@@ -21,9 +21,10 @@ export default class GraphDocsRoot extends React.PureComponent<Props, {}> {
           offset={0}
           sessionId={sessionId}
         />
+
         {obj.mutations.length > 0 && (
           <ShowRootType
-            name="Mutations"
+            name="Mutations" 
             fields={obj.mutations}
             offset={obj.queries.length}
             sessionId={sessionId}

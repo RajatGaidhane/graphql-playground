@@ -79,4 +79,5 @@ const Filter = styled<FilterProps, 'div'>('div')`
 
 const FilterText = styled.p`
   margin-left: 6px;
+  color: black;
 `

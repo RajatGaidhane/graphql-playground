@@ -209,7 +209,7 @@ class GraphQLEditor extends React.PureComponent<Props & ReduxProps> {
                     ref={this.setHttpHeadersRef}
                     onClick={this.props.closeQueryVariables}
                   >
-                    {'HTTP Headers ' +
+                    {'HTTP Header ' +
                       (this.props.headersCount && this.props.headersCount > 0
                         ? `(${this.props.headersCount})`
                         : '')}

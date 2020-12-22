@@ -17,6 +17,7 @@
     "express": "4.17.1",
     "koa": "2.11.0",
     "lerna": "^3.22.0",
+    "nexe": "^3.3.7",
     "rimraf": "3.0.2"
   },
   "dependencies": {
